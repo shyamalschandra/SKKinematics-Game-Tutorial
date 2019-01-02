@@ -48,8 +48,8 @@ class GameScene: SKScene {
     var firstTouch = false
     
     // parameter to control shuriken generation
-    var lastSpawnTimeInterval: NSTimeInterval = 0
-    var lastUpdateTimeInterval: NSTimeInterval = 0
+    var lastSpawnTimeInterval: TimeInterval = 0
+    var lastUpdateTimeInterval: TimeInterval = 0
     
     // last part! gaming score 
     var score: Int = 0
@@ -57,15 +57,15 @@ class GameScene: SKScene {
     let scoreLabel = SKLabelNode()
     let livesLabel = SKLabelNode()
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         
         // set the UI with score information 
         // setup score label
         scoreLabel.fontName = "Chalkduster"
         scoreLabel.text = "Score: 0"
         scoreLabel.fontSize = 20
-        scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Left
-        scoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
+        scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        scoreLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.top
         scoreLabel.position = CGPoint(x: 10, y: size.height -  10)
         addChild(scoreLabel)
         
@@ -73,31 +73,31 @@ class GameScene: SKScene {
         livesLabel.fontName = "Chalkduster"
         livesLabel.text = "Lives: 3"
         livesLabel.fontSize = 20
-        livesLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
-        livesLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.Top
+        livesLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.right
+        livesLabel.verticalAlignmentMode = SKLabelVerticalAlignmentMode.top
         livesLabel.position = CGPoint(x: size.width - 10, y: size.height - 10)
         addChild(livesLabel)
         
         //2
-        lowerTorso = childNodeWithName("torso_lower")
-        lowerTorso.position = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame) - 30)
+        lowerTorso = childNode(withName: "torso_lower")
+        lowerTorso.position = CGPoint(x: frame.midX, y: frame.midY - 30)
         
         //3
-        shadow  = childNodeWithName("shadow")
-        shadow.position = CGPoint(x: CGRectGetMidX(frame), y: CGRectGetMidY(frame) - 100)
+        shadow  = childNode(withName: "shadow")
+        shadow.position = CGPoint(x: frame.midX, y: frame.midY - 100)
         
-        upperTorso = lowerTorso.childNodeWithName("torso_upper")
-        upperArmFront = upperTorso.childNodeWithName("arm_upper_front")
-        lowerArmFront = upperArmFront.childNodeWithName("arm_lower_front")
-        fistFront = lowerArmFront.childNodeWithName("fist_front")
+        upperTorso = lowerTorso.childNode(withName: "torso_upper")
+        upperArmFront = upperTorso.childNode(withName: "arm_upper_front")
+        lowerArmFront = upperArmFront.childNode(withName: "arm_lower_front")
+        fistFront = lowerArmFront.childNode(withName: "fist_front")
         
-        upperArmBack = upperTorso.childNodeWithName("arm_upper_back")
-        lowerArmBack = upperArmBack.childNodeWithName("arm_lower_back")
-        fistBack = lowerArmBack.childNodeWithName("fist_back")
+        upperArmBack = upperTorso.childNode(withName: "arm_upper_back")
+        lowerArmBack = upperArmBack.childNode(withName: "arm_lower_back")
+        fistBack = lowerArmBack.childNode(withName: "fist_back")
         
-        upperLeg = lowerTorso.childNodeWithName("leg_upper_back")
-        lowerLeg = upperLeg.childNodeWithName("leg_lower_back")
-        foot = lowerLeg.childNodeWithName("foot_back")
+        upperLeg = lowerTorso.childNode(withName: "leg_upper_back")
+        lowerLeg = upperLeg.childNode(withName: "leg_lower_back")
+        foot = lowerLeg.childNode(withName: "foot_back")
         
         lowerLeg.reachConstraints = SKReachConstraints(lowerAngleLimit: CGFloat(-45).degreesToRadians(), upperAngleLimit: 0)
         upperLeg.reachConstraints = SKReachConstraints(lowerAngleLimit: CGFloat(-45).degreesToRadians(), upperAngleLimit: CGFloat(160).degreesToRadians())
@@ -109,9 +109,9 @@ class GameScene: SKScene {
         lowerArmFront.constraints = [rotationConstraint]
         lowerArmBack.constraints = [rotationConstraint]
         
-        head = upperTorso.childNodeWithName("head")
+        head = upperTorso.childNode(withName: "head")
         // 1
-        let orientToNodeConstraint = SKConstraint.orientToNode(targetNode, offset: SKRange(constantValue: 0.0))
+        let orientToNodeConstraint = SKConstraint.orient(to: targetNode, offset: SKRange(constantValue: 0.0))
         // 2
         let rangeOfHead = SKRange(lowerLimit: CGFloat(-50).degreesToRadians(),
                             upperLimit: CGFloat(80).degreesToRadians())
@@ -151,24 +151,24 @@ class GameScene: SKScene {
 //    }
     // 1
     func punchAtLocation(location: CGPoint, upperArmNode: SKNode, lowerArmNode: SKNode, fistNode: SKNode) {
-        let punch = SKAction.reachTo(location, rootNode: upperArmNode, duration: 0.1)
-        let restore = SKAction.runBlock {
-            upperArmNode.runAction(SKAction.rotateToAngle(self.upperArmAngleDeg.degreesToRadians(), duration: 0.1))
-            lowerArmNode.runAction(SKAction.rotateToAngle(self.lowerArmAngleDeg.degreesToRadians(), duration: 0.1))
+        let punch = SKAction.reach(to: location, rootNode: upperArmNode, duration: 0.1)
+        let restore = SKAction.run {
+            upperArmNode.run(SKAction.rotate(toAngle: self.upperArmAngleDeg.degreesToRadians(), duration: 0.1))
+            lowerArmNode.run(SKAction.rotate(toAngle: self.lowerArmAngleDeg.degreesToRadians(), duration: 0.1))
         }
         
         // fistNode.runAction(SKAction.sequence([punch, restore]))
-        let checkIntersection = intersectionCheckActionForNode(fistNode)
-        fistNode.runAction(SKAction.sequence([punch, checkIntersection, restore]))
+        let checkIntersection = intersectionCheckActionForNode(effectorNode: fistNode)
+        fistNode.run(SKAction.sequence([punch, checkIntersection, restore]))
     }
     
     func punchAtLocation(location: CGPoint) {
         // 2
         if rightPunch {
-            punchAtLocation(location, upperArmNode: upperArmFront, lowerArmNode: lowerArmFront, fistNode: fistFront)
+            punchAtLocation(location: location, upperArmNode: upperArmFront, lowerArmNode: lowerArmFront, fistNode: fistFront)
         }
         else {
-            punchAtLocation(location, upperArmNode: upperArmBack, lowerArmNode: lowerArmBack, fistNode: fistBack)
+            punchAtLocation(location: location, upperArmNode: upperArmBack, lowerArmNode: lowerArmBack, fistNode: fistBack)
         }
         // 3
         rightPunch = !rightPunch
@@ -176,20 +176,20 @@ class GameScene: SKScene {
     
     // leg kick operation
     func kickAtLocation(location: CGPoint) {
-        let kick = SKAction.reachTo(location, rootNode: upperLeg, duration: 0.1)
+        let kick = SKAction.reach(to: location, rootNode: upperLeg, duration: 0.1)
         
-        let restore = SKAction.runBlock {
-            self.upperLeg.runAction(SKAction.rotateToAngle(self.upperLegAngleDeg.degreesToRadians(), duration: 0.1))
-            self.lowerLeg.runAction(SKAction.rotateToAngle(self.lowerLegAngleDeg.degreesToRadians(), duration: 0.1))
+        let restore = SKAction.run {
+            self.upperLeg.run(SKAction.rotate(toAngle: self.upperLegAngleDeg.degreesToRadians(), duration: 0.1))
+            self.lowerLeg.run(SKAction.rotate(toAngle: self.lowerLegAngleDeg.degreesToRadians(), duration: 0.1))
         }
         
-        let checkIntersection = intersectionCheckActionForNode(foot)
+        let checkIntersection = intersectionCheckActionForNode(effectorNode: foot)
         
-        foot.runAction(SKAction.sequence([kick, checkIntersection, restore]))
+        foot.run(SKAction.sequence([kick, checkIntersection, restore]))
     }
     
     // 3
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // start constraints for head
         if !firstTouch {
             for c in head.constraints! {
@@ -201,17 +201,17 @@ class GameScene: SKScene {
         }
         
         for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
+            let location = touch.location(in: self)
             lowerTorso.xScale =
-                location.x < CGRectGetMidX(frame) ? abs(lowerTorso.xScale) * -1 : abs(lowerTorso.xScale)
+                location.x < frame.midX ? abs(lowerTorso.xScale) * -1 : abs(lowerTorso.xScale)
             // punchAtLocation(location)
             // instead of simple punch, here deal with punching(fist) & kick(foot)
             let lower = location.y < lowerTorso.position.y + 10
             if lower {
-                kickAtLocation(location)
+                kickAtLocation(location: location)
             }
             else {
-                punchAtLocation(location)
+                punchAtLocation(location: location)
             }
             targetNode.position = location
         }
@@ -225,12 +225,12 @@ class GameScene: SKScene {
         let minY = lowerTorso.position.y - 60 + shuriken.size.height/2
         let maxY = lowerTorso.position.y  + 140 - shuriken.size.height/2
         let rangeY = maxY - minY
-        let actualY = (CGFloat(arc4random()) % rangeY) + minY
+        let actualY = (CGFloat(arc4random()).truncatingRemainder(dividingBy: rangeY)) + minY
         // 3
         let left = arc4random() % 2
         let actualX = (left == 0) ? -shuriken.size.width/2 : size.width + shuriken.size.width/2
         // 4
-        shuriken.position = CGPointMake(actualX, actualY)
+        shuriken.position = CGPoint(x: actualX, y: actualY)
         shuriken.name = "shuriken"
         shuriken.zPosition = 1
         addChild(shuriken)
@@ -238,12 +238,12 @@ class GameScene: SKScene {
         let minDuration = 4.0
         let maxDuration = 6.0
         let rangeDuration = maxDuration - minDuration
-        let actualDuration = (Double(arc4random()) % rangeDuration) + minDuration
+        let actualDuration = (Double(arc4random()).truncatingRemainder(dividingBy: rangeDuration)) + minDuration
         // 6
-        let actionMove = SKAction.moveTo(CGPointMake(size.width/2, actualY), duration: actualDuration)
+        let actionMove = SKAction.move(to: CGPoint(x: size.width/2, y: actualY), duration: actualDuration)
         let actionMoveDone = SKAction.removeFromParent()
         // new action: shuriken kit ninja, life point decrease
-        let hitAction = SKAction.runBlock({
+        let hitAction = SKAction.run({
             // 1
             if self.life > 0 {
                 self.life -= 1
@@ -252,28 +252,28 @@ class GameScene: SKScene {
             self.livesLabel.text = "Lives: \(Int(self.life))"
             
             // 3
-            let blink = SKAction.sequence([SKAction.fadeOutWithDuration(0.05), SKAction.fadeInWithDuration(0.05)])
+            let blink = SKAction.sequence([SKAction.fadeOut(withDuration: 0.05), SKAction.fadeIn(withDuration: 0.05)])
             
             // 4
-            let checkGameOverAction = SKAction.runBlock({
+            let checkGameOverAction = SKAction.run({
                 if self.life <= 0 {
-                    let transition = SKTransition.fadeWithDuration(1.0)
+                    let transition = SKTransition.fade(withDuration: 1.0)
                     let skView = self.view! as SKView
                     let gameOverScene = GameOverScene(size: skView.bounds.size)
                     self.view?.presentScene(gameOverScene, transition: transition)
                 }
             })
             // 5
-            self.lowerTorso.runAction(SKAction.sequence([blink, blink, checkGameOverAction]))
+            self.lowerTorso.run(SKAction.sequence([blink, blink, checkGameOverAction]))
         })
         
         // new action for shuriken hit ninja
-        shuriken.runAction(SKAction.sequence([actionMove, hitAction, actionMoveDone]))
+        shuriken.run(SKAction.sequence([actionMove, hitAction, actionMoveDone]))
         // shuriken.runAction(SKAction.sequence([actionMove, actionMoveDone]))
         // 7
         let angle = left == 0 ? CGFloat(-90).degreesToRadians() : CGFloat(90).degreesToRadians()
-        let rotate = SKAction.repeatActionForever(SKAction.rotateByAngle(angle, duration: 0.2))
-        shuriken.runAction(SKAction.repeatActionForever(rotate))
+        let rotate = SKAction.repeatForever(SKAction.rotate(byAngle: angle, duration: 0.2))
+        shuriken.run(SKAction.repeatForever(rotate))
     }
     
     func updateWithTimeSinceLastUpdate(timeSinceLast: CFTimeInterval) {
@@ -284,32 +284,32 @@ class GameScene: SKScene {
         }
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: CFTimeInterval) {
         var timeSinceLast = currentTime - lastUpdateTimeInterval
         lastUpdateTimeInterval = currentTime
         if timeSinceLast > 1.0 {
             timeSinceLast = 1.0 / 60.0
             lastUpdateTimeInterval = currentTime
         }
-        updateWithTimeSinceLastUpdate(timeSinceLast)
+        updateWithTimeSinceLastUpdate(timeSinceLast: timeSinceLast)
     }
     
     func intersectionCheckActionForNode(effectorNode: SKNode) -> SKAction {
-        let checkIntersection = SKAction.runBlock {
+        let checkIntersection = SKAction.run {
             
             for object: AnyObject in self.children {
                 // check for intersection against any sprites named "shuriken"
                 if let node = object as? SKSpriteNode {
                     if node.name == "shuriken" {
                         //convert coordinates into common system based on root node
-                        let effectorInNode = self.convertPoint(effectorNode.position, fromNode:effectorNode.parent!)
+                        let effectorInNode = self.convert(effectorNode.position, from:effectorNode.parent!)
                         var shurikenFrame = node.frame
-                        shurikenFrame.origin = self.convertPoint(shurikenFrame.origin, fromNode: node.parent!)
+                        shurikenFrame.origin = self.convert(shurikenFrame.origin, from: node.parent!)
                         
                         if shurikenFrame.contains(effectorInNode) {
                         // if node.intersectsNode(effectorNode) {
                             // play a hit sound
-                            self.runAction(SKAction.playSoundFileNamed("hit.mp3", waitForCompletion: false))
+                            self.run(SKAction.playSoundFileNamed("hit.mp3", waitForCompletion: false))
                             
                             // show a spark effect
                             let spark = SKSpriteNode(imageNamed: "spark")
@@ -317,10 +317,10 @@ class GameScene: SKScene {
                             spark.zPosition = 60
                             self.addChild(spark)
                             let fadeAndScaleAction = SKAction.group([
-                                SKAction.fadeOutWithDuration(0.2),
-                                SKAction.scaleTo(0.1, duration: 0.2)])
+                                SKAction.fadeOut(withDuration: 0.2),
+                                SKAction.scale(to: 0.1, duration: 0.2)])
                             let cleanUpAction = SKAction.removeFromParent()
-                            spark.runAction(SKAction.sequence([fadeAndScaleAction, cleanUpAction]))
+                            spark.run(SKAction.sequence([fadeAndScaleAction, cleanUpAction]))
                             
                             self.score += 1
                             self.scoreLabel.text = "Score: \(Int(self.score))"
@@ -329,7 +329,7 @@ class GameScene: SKScene {
                         }
                         else {
                             // play a miss sound
-                            self.runAction(SKAction.playSoundFileNamed("miss.mp3", waitForCompletion: false))
+                            self.run(SKAction.playSoundFileNamed("miss.mp3", waitForCompletion: false))
                         }
                     }
                 }

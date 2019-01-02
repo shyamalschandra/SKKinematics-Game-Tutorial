@@ -23,7 +23,7 @@
 import CoreGraphics
 
 /** The value of π as a CGFloat */
-let π = CGFloat(M_PI)
+let π = CGFloat(Double.pi)
 
 extension CGFloat {
   /**
@@ -53,7 +53,7 @@ extension CGFloat {
    * Ensures that the float value stays between the given values, inclusive.
    */
   mutating func clamp(v1: CGFloat, _ v2: CGFloat) -> CGFloat {
-    self = clamped(v1, v2)
+    self = clamped(v1: v1, v2)
     return self
   }
 
@@ -93,7 +93,7 @@ extension CGFloat {
  */
 func shortestAngleBetween(angle1: CGFloat, angle2: CGFloat) -> CGFloat {
     let twoπ = π * 2.0
-    var angle = (angle2 - angle1) % twoπ
+    var angle = (angle2 - angle1).truncatingRemainder(dividingBy: twoπ)
     if (angle >= π) {
         angle = angle - twoπ
     }
