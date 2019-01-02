@@ -4,9 +4,9 @@
 * However, there are issues due to fast updating Swift and Xcode ... =\
 * Here is my notes that fix the tutorial issues. Hope it can help other who want to read this tutorial =]
 	+ My environment:
-		- Xcode 7.3
-		- Swift 2.2
-		- Simulator: iPhone 6s & iPhone 6s plus  
+		- Xcode 10
+		- Swift 4.2+
+		- Simulator: Latest iPhone  
 	* Screen size is designed for iPhone 5s, there are black gap on 6/6 plus and above 
 	* Swift 2.2 updates, remove hash tag (#)
 		- change made in CGFloat+Extensions.swift: func random
